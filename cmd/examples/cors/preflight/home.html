@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preflight CORS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            margin-top: 100px;
+            display: flex;
+            gap: 20px;
+            width: 80%;
+            max-width: 1200px;
+        }
+
+        #control, #output {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-height: 150px;
+        }
+
+        #control {
+            background-color: #eef;
+            min-height: 200px;
+            max-height: 400px; 
+            overflow-y: auto; 
+            white-space: pre-wrap; 
+        }
+
+        #output {
+            background-color: #eef7ff;
+            min-height: 200px;
+            max-height: 400px; 
+            overflow-y: auto; 
+            white-space: pre-wrap; 
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #003f7f;
+        }
+        .divider {
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+            margin: 15px 0;
+        }
+
+
+        input[type="text"], input[type="date"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        input[type="text"]:disabled, input[type="date"]:disabled, input[type="number"]:disabled, textarea:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="control">
+
+            <h2>Get All Books</h2>
+            <button id="getAllBooks">List All Books</button>
+
+           <div class="divider"></div>
+            <h2>Add Book</h2>
+            <input type="text" id="title" placeholder="Enter book title..." />
+            <input type="text" id="ISBN" placeholder="Enter book ISBN..." />
+            <input type="text" id="Genre" placeholder="Enter book Genre..." />
+            <input type="text" id="Description" placeholder="Enter book Description..." />
+            <input type="text" id="author" placeholder="Enter book Author..." />
+            <input type="date" id="Created_at" placeholder="Enter book title..." />
+            <button id="addBook">addBook</button> 
+        
+            <div class="divider"></div>
+            <h2>Get Book</h2>
+
+            <input type="text" id="getBookById" placeholder="Enter book ID..." />
+            <button id="getBook">Get Book</button> 
+
+            <div class="divider"></div>
+            <h2>Update Books</h2>
+            <input type="text" id="uId" placeholder="Enter book ID..." />
+            <input type="text" id="utitle" placeholder="Enter book title..." />
+            <input type="text" id="uISBN" placeholder="Enter book ISBN..." />
+            <input type="text" id="uGenre" placeholder="Enter book Genre..." />
+            <input type="text" id="uDescription" placeholder="Enter book Description..." />
+            <input type="text" id="uauthor" placeholder="Enter book Author..." />
+            <input type="date" id="uCreated_at" placeholder="Enter book title..." />
+            <button id="updateBook">Update Book</button>
+
+            <div class="divider"></div>
+            <h2>Create List</h2>
+            <input type="text" id="listName" placeholder="Enter list name..." />
+            <input type="text" id="listDescription" placeholder="Enter list description..." />
+            <input type="number" id="createdBy" placeholder="Enter creator ID..." />
+            <button id="createList">Create List</button>
+    
+            <div class="divider"></div>
+            <h2>Get All Lists</h2>
+            <button id="getAllLists">Get All Lists</button>
+    
+            <div class="divider"></div>
+            <h2>Get List By ID</h2>
+            <input type="text" id="getListById" placeholder="Enter list ID..." />
+            <button id="getList">Get List</button>
+    
+            <div class="divider"></div>
+            <h2>Update List</h2>
+            <input type="text" id="updateListId" placeholder="Enter list ID..." />
+            <input type="text" id="updateListName" placeholder="Enter list name..." />
+            <input type="text" id="updateListStatus" placeholder="Enter list status..." />
+            <button id="updateListButton">Update List</button>
+    
+            <div class="divider"></div>
+            <h2>Delete List</h2>
+            <input type="text" id="deleteListId" placeholder="Enter list ID to delete..." />
+            <button id="deleteListButton">Delete List</button>
+    
+            <div class="divider"></div>
+            <h2>Add Book to List</h2>
+            <input type="text" id="addBookToListId" placeholder="Enter list ID..." />
+            <input type="text" id="bookIdToAdd" placeholder="Enter book ID to add..." />
+            <button id="addBookToList">Add Book to List</button>
+    
+            <div class="divider"></div>
+            <h2>Remove Book from List</h2>
+            <input type="text" id="removeBookFromListId" placeholder="Enter list ID..." />
+            <input type="text" id="bookIdToRemove" placeholder="Enter book ID to remove..." />
+            <button id="removeBookFromList">Remove Book from List</button>
+
+            <div class="divider"></div>
+            <h2>Add Review</h2>
+            <input type="text" id="bookIdForReview" placeholder="Enter book ID..." />
+            <input type="text" id="userId" placeholder="Enter user ID..." />
+            <textarea id="reviewText" placeholder="Enter your review..."></textarea>
+            <input type="number" id="rating" placeholder="Enter rating (1-5)" />
+            <button id="addReview">Add Review</button>
+    
+            <div class="divider"></div>
+            <h2>Get All Reviews for a Book</h2>
+            <input type="text" id="getBookIdForReviews" placeholder="Enter book ID..." />
+            <button id="getAllReviews">Get Reviews</button>
+    
+            <div class="divider"></div>
+            <h2>Delete Review</h2>
+            <input type="text" id="reviewIdToDelete" placeholder="Enter review ID to delete..." />
+            <button id="deleteReview">Delete Review</button>
+    
+            <div class="divider"></div>
+            <h2>Update Review</h2>
+            <input type="text" id="reviewIdToUpdate" placeholder="Enter review ID..." />
+            <input type="number" id="updatedRating" placeholder="Enter new rating (1-5)" />
+            <button id="updateReview">Update Review</button>
+
+            <div class="divider"></div>
+            <h2>Create User</h2>
+            <input type="text" id="username" placeholder="Enter username..." />
+            <input type="email" id="email" placeholder="Enter email..." />
+            <input type="password" id="password" placeholder="Enter password..." />
+            <button id="createUser">Create User</button>
+    
+            <div class="divider"></div>
+            <h2>Activate User</h2>
+            <input type="text" id="activationToken" placeholder="Enter activation token..." />
+            <button id="activateUser">Activate User</button>
+    
+            <div class="divider"></div>
+            <h2>Authenticate User</h2>
+            <input type="email" id="authEmail" placeholder="Enter email..." />
+            <input type="password" id="authPassword" placeholder="Enter password..." />
+            <button id="authenticateUser">Authenticate</button>
+    
+            <div class="divider"></div>
+            <h2>Get User Profile</h2>
+            <input type="text" id="getUserId" placeholder="Enter user ID..." />
+            <button id="getUserProfile">Get Profile</button>
+    
+            <div class="divider"></div>
+            <h2>Get User Lists</h2>
+            <input type="text" id="getUserListsId" placeholder="Enter user ID..." />
+            <button id="getUserLists">Get Lists</button>
+    
+            <div class="divider"></div>
+            <h2>Get User Reviews</h2>
+            <input type="text" id="getUserReviewsId" placeholder="Enter user ID..." />
+            <button id="getUserReviews">Get Reviews</button>
+
+
+        </div>
+        <div id="output">
+            <h2>Output</h2>
+            <p>Waiting for response...</p>
+        </div>
+    </div>
+
+    <script>
+        const getAllBooks = document.getElementById('getAllBooks');
+        const addBook = document.getElementById('addBook');
+        const getBook = document.getElementById('getBook');
+        const updateBook = document.getElementById('updateBook');
+
+        const createList = document.getElementById('createList');
+        const getAllLists = document.getElementById('getAllLists');
+        const getList = document.getElementById('getList');
+        const updateListButton = document.getElementById('updateListButton');
+        const deleteListButton = document.getElementById('deleteListButton');
+        const addBookToList = document.getElementById('addBookToList');
+        const removeBookFromList = document.getElementById('removeBookFromList');
+
+        const addReview = document.getElementById('addReview');
+        const getAllReviews = document.getElementById('getAllReviews');
+        const deleteReview = document.getElementById('deleteReview');
+        const updateReview = document.getElementById('updateReview');
+
+        const createUser = document.getElementById('createUser');
+        const activateUser = document.getElementById('activateUser');
+        const authenticateUser = document.getElementById('authenticateUser');
+        const getUserProfile = document.getElementById('getUserProfile');
+        const getUserLists = document.getElementById('getUserLists');
+        const getUserReviews = document.getElementById('getUserReviews');
+
+           
+        updateBook.addEventListener('click', function () {
+            var id = document.getElementById('uId').value;
+
+var title = document.getElementById('utitle').value;
+var ISBN = document.getElementById('uISBN').value;
+var genre = document.getElementById('uGenre').value;
+var description = document.getElementById('uDescription').value;
+var author = document.getElementById('uauthor').value;
+var createdAt = document.getElementById('uCreated_at').value;
+
+var dateParts = createdAt.split('/');  
+var date = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]); 
+var isoDate = "1960-07-11T00:00:00Z"
+    console.log(isoDate)
+fetch("http://localhost:3000/api/v1/books/"+id, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+            body: JSON.stringify({
+            title: title,
+            // isbn: ISBN,
+            // author: author,
+            // genre: genre,
+            // description: description,
+            // created_at: isoDate,
+            
+         })
+    }).then( function(response) {
+        response.text().then(function (text) {
+          document.getElementById("output").innerHTML = text;
+       });
+     },
+     function(err) {
+       document.getElementById("output").innerHTML = err;
+     }
+  );
+});
+
+        getBook.addEventListener('click', function () {
+
+        var id = document.getElementById('getBookById').value;
+
+    fetch("http://localhost:3000/api/v1/books/"+id, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+            
+    }).then( function(response) {
+        response.text().then(function (text) {
+          document.getElementById("output").innerHTML = text;
+       });
+     },
+     function(err) {
+       document.getElementById("output").innerHTML = err;
+     }
+  );
+});
+        
+        addBook.addEventListener('click', function () {
+
+        var title = document.getElementById('title').value;
+        var ISBN = document.getElementById('ISBN').value;
+        var genre = document.getElementById('Genre').value;
+        var description = document.getElementById('Description').value;
+        var author = document.getElementById('author').value;
+        var createdAt = document.getElementById('Created_at').value;
+
+        var dateParts = createdAt.split('/');  
+        var date = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]); 
+        var isoDate = "1960-07-11T00:00:00Z"
+            console.log(isoDate)
+        fetch("http://localhost:3000/api/v1/books/", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+                },
+                    body: JSON.stringify({
+                    title: title,
+                    isbn: ISBN,
+                    author: author,
+                    genre: genre,
+                    description: description,
+                    created_at: isoDate,
+                    
+                 })
+            }).then( function(response) {
+                response.text().then(function (text) {
+                  document.getElementById("output").innerHTML = text;
+               });
+             },
+             function(err) {
+               document.getElementById("output").innerHTML = err;
+             }
+          );
+       });
+
+        getAllBooks.addEventListener('click', function() {
+            fetch("http://localhost:3000/api/v1/books/", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+                }
+            }).then(function(response) {
+                return response.json(); 
+            }).then(function(data) {
+                document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }).catch(function(err) {
+                document.getElementById("output").innerHTML = `<pre>Error: ${err}</pre>`;
+            });
+        });
+    
+    // Create List
+createList.addEventListener('click', function () {
+    var name = document.getElementById('listName').value;
+    var description = document.getElementById('listDescription').value;
+    var createdBy = document.getElementById('createdBy').value;
+
+    fetch("http://localhost:3000/api/v1/lists", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            name: name,
+            description: description,
+            created_by: +createdBy
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Get All Lists
+getAllLists.addEventListener('click', function () {
+    fetch("http://localhost:3000/api/v1/lists", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        }
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }).catch(function (err) {
+        document.getElementById("output").innerHTML = `<pre>Error: ${err}</pre>`;
+    });
+});
+
+// Get List By ID
+getList.addEventListener('click', function () {
+    var id = document.getElementById('getListById').value;
+
+    fetch("http://localhost:3000/api/v1/lists/" + id, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        }
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Update List
+updateListButton.addEventListener('click', function () {
+    var id = document.getElementById('updateListId').value;
+    var name = document.getElementById('updateListName').value;
+    var status = document.getElementById('updateListStatus').value;
+
+    fetch("http://localhost:3000/api/v1/lists/" + id, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            name: name,
+            status: status
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Delete List
+deleteListButton.addEventListener('click', function () {
+    var id = document.getElementById('deleteListId').value;
+
+    fetch("http://localhost:3000/api/v1/lists/" + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        }
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Add Book to List
+addBookToList.addEventListener('click', function () {
+    var listId = document.getElementById('addBookToListId').value;
+    var bookId = document.getElementById('bookIdToAdd').value;
+
+    fetch("http://localhost:3000/api/v1/lists/" + listId + "/books", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            bookid: +bookId
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Remove Book from List
+removeBookFromList.addEventListener('click', function () {
+    var listId = document.getElementById('removeBookFromListId').value;
+    var bookId = document.getElementById('bookIdToRemove').value;
+
+    fetch("http://localhost:3000/api/v1/lists/" + listId + "/books", {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            list_id: +listId,
+            book_id: +bookId
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+    
+// Add Review
+addReview.addEventListener('click', function () {
+    var bookId = document.getElementById('bookIdForReview').value;
+    var userId = document.getElementById('userId').value;
+    var review = document.getElementById('reviewText').value;
+    var rating = document.getElementById('rating').value;
+
+    fetch("http://localhost:3000/api/v1/books/" + bookId + "/reviews", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            user_id: +userId,
+            review: review,
+            rating: +rating
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Get All Reviews for a Book
+getAllReviews.addEventListener('click', function () {
+    var bookId = document.getElementById('getBookIdForReviews').value;
+
+    fetch("http://localhost:3000/api/v1/books/" + bookId + "/reviews", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        }
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }).catch(function (err) {
+        document.getElementById("output").innerHTML = `<pre>Error: ${err}</pre>`;
+    });
+});
+
+// Delete Review
+deleteReview.addEventListener('click', function () {
+    var reviewId = document.getElementById('reviewIdToDelete').value;
+
+    fetch("http://localhost:3000/api/v1/reviews/" + reviewId, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        }
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Update Review
+updateReview.addEventListener('click', function () {
+    var reviewId = document.getElementById('reviewIdToUpdate').value;
+    var updatedRating = document.getElementById('updatedRating').value;
+
+    fetch("http://localhost:3000/api/v1/reviews/" + reviewId, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+        body: JSON.stringify({
+            rating: +updatedRating
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+    
+// Create User
+createUser.addEventListener('click', function () {
+    var username = document.getElementById('username').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+
+    fetch("http://localhost:3000/v1/users", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Activate User
+activateUser.addEventListener('click', function () {
+    var token = document.getElementById('activationToken').value;
+
+    fetch("http://localhost:3000/v1/users/activated", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            token: token
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Authenticate User
+authenticateUser.addEventListener('click', function () {
+    var email = document.getElementById('authEmail').value;
+    var password = document.getElementById('authPassword').value;
+
+    fetch("http://localhost:3000/v1/tokens/authentication", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    }).then(function (response) {
+        response.json().then(function (data) {
+            document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Get User Profile
+getUserProfile.addEventListener('click', function () {
+    var userId = document.getElementById('getUserId').value;
+    var token = 'Bearer YOUR_JWT_TOKEN_HERE';  // Replace with actual token
+
+    fetch("http://localhost:3000/api/v1/users/" + userId, {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+    }).then(function (response) {
+        response.json().then(function (data) {
+            document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Get User Lists
+getUserLists.addEventListener('click', function () {
+    var userId = document.getElementById('getUserListsId').value;
+    var token = 'Bearer YOUR_JWT_TOKEN_HERE';  // Replace with actual token
+
+    fetch("http://localhost:3000/api/v1/users/" + userId + "/lists", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+    }).then(function (response) {
+        response.json().then(function (data) {
+            document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Get User Reviews
+getUserReviews.addEventListener('click', function () {
+    var userId = document.getElementById('getUserReviewsId').value;
+    var token = 'Bearer YOUR_JWT_TOKEN_HERE';  // Replace with actual token
+
+    fetch("http://localhost:3000/api/v1/users/" + userId + "/reviews", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+        },
+    }).then(function (response) {
+        response.json().then(function (data) {
+            document.getElementById("output").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+    
+    </script>
+</body>
+</html>

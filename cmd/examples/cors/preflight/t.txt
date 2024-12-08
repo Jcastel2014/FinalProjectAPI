@@ -1,0 +1,10 @@
+       //    body: JSON.stringify({
+        //             email: 'john@example.com',
+        //             password: 'mangotree'
+        //          })
+
+        .PHONY: books/add
+books/add:
+	@echo 'Adding Book'; \
+	BODY='{"title":"To Kill a Mockingbird","isbn":"6","author":"swag Lee","genre":"Fiction","description":"A novel set in the American South during the 1930s, focusing on themes of racial injustice and moral growth.","created_at":"1960-07-11T00:00:00Z"}'; \
+	curl -H "Authorization: Bearer ${token}" -X POST -d "$$BODY" localhost:3000/api/v1/books; \

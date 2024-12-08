@@ -191,22 +191,6 @@ func (a *appDependencies) requirePermission(permissionCode string, next http.Han
 
 }
 
-// SCENARIO #1: Let's assume our API is a public API. Anyone can use it once they
-// signup. So for the clients' browsers to be able to read our API responses, we
-// need to set the Access-Control-Allow-Origin header to everyone
-// (using the * operator). Notice we are back to returning 'http.Handler'
-// Also notice that this middleware sets the header on the response object (w). We
-// set the response header early in the middleware chain to enable our
-// response to be accepted by the client's browser
-
-// func (a *appDependencies) enableCORS(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		w.Header().Set("Access-Control-Allow-Origin", "*")
-
-// 		next.ServeHTTP(w, r)
-// 	})
-// }
-
 func (a *appDependencies) enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Vary", "Origin")

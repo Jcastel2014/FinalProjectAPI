@@ -2,55 +2,54 @@ package main
 
 import (
 	"flag"
-	"log"
+	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
+	"time"
 )
 
-// We will access the POST /v1/tokens/authentication endpoint
-const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h1>Appletree Preflight CORS</h1>
-    <div id="output"></div>
-    <script>
-         document.addEventListener('DOMContentLoaded', function() {
-         fetch("http://localhost:3000/v1/tokens/authentication", {
-           method: "POST",
-           headers: {
-                    'Content-Type': 'application/json'
-                    },
-           body: JSON.stringify({
-                    email: 'john@example.com',
-                    password: 'mangotree'
-                 })
-           }).then( function(response) {
-		          response.text().then(function (text) {
-                  document.getElementById("output").innerHTML = text;
-               });
-             },
-             function(err) {
-               document.getElementById("output").innerHTML = err;
-             }
-          );
-       });
-  </script>
-</body>
-</html>`
+type serverConfig struct {
+	port int
+	env  string
+}
 
-// A very simple HTTP server
+type appInstance struct {
+	config serverConfig
+	logger *slog.Logger
+	// pinModel *data.PinModel
+}
+
 func main() {
-	addr := flag.String("addr", ":9000", "Server address")
+	var settings serverConfig
+
+	flag.IntVar(&settings.port, "port", 9000, "Server Port")
+	flag.StringVar(&settings.env, "env", "development", "Environment(Development|Staging|Production)")
 	flag.Parse()
 
-	log.Printf("starting server on %s", *addr)
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	err := http.ListenAndServe(*addr,
-		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(html))
-		}))
-	log.Fatal(err)
+	logger.Info("database connection pool established")
+
+	a := &appInstance{
+		config: settings,
+		logger: logger,
+		// pinModel: &data.PinModel{DB: db},
+	}
+
+	apiServer := &http.Server{
+		Addr:         fmt.Sprintf(":%d", settings.port),
+		Handler:      a.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		ErrorLog:     slog.NewLogLogger(logger.Handler(), slog.LevelError),
+	}
+
+	logger.Info("starting server", "address", apiServer.Addr, "env", settings.env)
+	err := apiServer.ListenAndServe()
+	if err != nil {
+		logger.Error("Server error", "error", err)
+		os.Exit(1)
+	}
 }

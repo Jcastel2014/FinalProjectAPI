@@ -13,7 +13,7 @@ func (a *appDependencies) routes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(a.notAllowedResponse)
 
 	// GET    /api/v1/books              # List all books with pagination
-	router.HandlerFunc(http.MethodGet, "/api/v1/books", a.GetAllBooks)
+	router.HandlerFunc(http.MethodGet, "/api/v1/books", a.requireActivatedUser(a.GetAllBooks))
 	// GET    /api/v1/books/{id}         # Get book details
 	router.HandlerFunc(http.MethodGet, "/api/v1/books/:id", a.requireActivatedUser(a.getBook))
 	// POST   /api/v1/books              # Add new book
