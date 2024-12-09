@@ -34,7 +34,6 @@ func main() {
 	a := &appInstance{
 		config: settings,
 		logger: logger,
-		// pinModel: &data.PinModel{DB: db},
 	}
 
 	apiServer := &http.Server{

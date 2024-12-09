@@ -36,19 +36,19 @@ db/migrations/up:
 .PHONY: user/create
 user/create:
 	@echo 'Creating User'; \
-	BODY1='{"username": "John Doe", "email": "john@example.com", "password": "mangotree"}'; \
+	BODY1='{"username": "carl Doe", "email": "carl@example.com", "password": "mangotree"}'; \
 	curl -i -d "$$BODY1" localhost:3000/v1/users; \
 
 .PHONY: user/activate
 user/activate:
 	@echo 'Activating User'; \
-	curl -X PUT -d '{"token": "VMPNBX2Q5S2GLMUF3CXSMIMUCE"}' localhost:3000/v1/users/activated; \
+	curl -X PUT -d '{"token": "F3TQ5TSJMSQ7QLNTV5TIF7PG2U"}' localhost:3000/v1/users/activated; \
 	
 
 .PHONY: token/authenticate
 token/authenticate:
 	@echo 'Authenticating token'; \
-	BODY='{"email": "john@example.com", "password": "mangotree"}'; \
+	BODY='{"email": "carl@example.com", "password": "peertree"}'; \
 	curl -d "$$BODY" localhost:3000/v1/tokens/authentication; \
 
 .PHONY: user/get
@@ -164,13 +164,13 @@ books/review/update:
 .PHONY: users/password/reset
 user/password/reset:
 	@echo 'Getting Reset Token'; \
-	curl -X POST -d '{"email": "john@example.com"}' localhost:3000/v1/tokens/password-reset
+	curl -X POST -d '{"email": "carl@example.com"}' localhost:3000/v1/tokens/password-reset
 
 .PHONY :users/password/reset/activate
 user/password/reset/activate:
 	@echo 'Reseting Password'; \
-	BODY='{"password": "dandadan", "token": "ALYUWQ4VC3JQWLIG3WJ2FXGNIA"}'; \
-	curl -X PUT -d "$$BODY" localhost:4000/v1/users/password
+	BODY='{"password": "peertree", "token": "T5RDHVAPVE6MT4XTDPSRUM4TQY"}'; \
+	curl -X PUT -d "$$BODY" localhost:3000/v1/users/password
 
 
 .PHONY: run/rateLimite/enabled

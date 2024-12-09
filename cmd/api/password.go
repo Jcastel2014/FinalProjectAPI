@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -44,22 +45,19 @@ func (a *appDependencies) passwordReset(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	//new activation token to expire in 3 days time
-	token, err := a.tokenModel.New(user.ID, 3*24*time.Hour, data.ScopeActivation)
+	token, err := a.tokenModel.New(user.ID, 24*time.Hour, data.ScopeActivation)
 	if err != nil {
 		a.serverErrResponse(w, r, err)
 		return
 	}
+	log.Println(user.Activated)
 
 	message := envelope{
 		"message": "an email will be sent to you containing password reset instructions",
 	}
 
-	/*	Send the email as a Goroutine. We do this because it might take a long time
-		and we don't want our handler to wait for that to finish. We will implement
-		the background() function later
-	*/
 	a.background(func() {
+
 		data := map[string]any{
 			"activationToken": token.PlainText,
 			"userID":          user.ID,
@@ -72,7 +70,6 @@ func (a *appDependencies) passwordReset(w http.ResponseWriter, r *http.Request) 
 
 	})
 
-	//status code 201 resource created
 	err = a.writeJSON(w, http.StatusCreated, message, nil)
 	if err != nil {
 		a.serverErrResponse(w, r, err)
@@ -112,8 +109,6 @@ func (a *appDependencies) activatePasswordReset(w http.ResponseWriter, r *http.R
 		}
 		return
 	}
-
-	user.Activated = true
 
 	err = user.Password.Set(incomingData.Password)
 	if err != nil {
