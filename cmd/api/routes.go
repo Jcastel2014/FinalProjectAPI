@@ -60,6 +60,10 @@ func (a *appDependencies) routes() http.Handler {
 	// GET    /api/v1/users/{id}/reviews # Get user's reviews
 	router.HandlerFunc(http.MethodGet, "/api/v1/users/:id/reviews", a.requireActivatedUser(a.GetUserReviews))
 
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", a.passwordReset)
+
+	router.HandlerFunc(http.MethodPut, "/v1/users/password", a.activatePasswordReset)
+
 	return a.recoverPanic(a.enableCORS(a.rateLimit(a.authenticate(router))))
 }
 

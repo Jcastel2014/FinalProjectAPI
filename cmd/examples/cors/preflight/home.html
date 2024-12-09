@@ -237,6 +237,18 @@
             <button id="getUserReviews">Get Reviews</button>
 
 
+        <div class="divider"></div>
+        <h2>Request Password Reset</h2>
+        <input type="email" id="resetEmail" placeholder="Enter your email..." />
+        <button id="requestPasswordReset">Request Reset</button>
+
+        <div class="divider"></div>
+        <h2>Reset Password</h2>
+        <input type="text" id="resetToken" placeholder="Enter reset token..." />
+        <input type="password" id="newPassword" placeholder="Enter new password..." />
+        <button id="resetPassword">Reset Password</button>
+
+
         </div>
         <div id="output">
             <h2>Output</h2>
@@ -269,6 +281,9 @@
         const getUserProfile = document.getElementById('getUserProfile');
         const getUserLists = document.getElementById('getUserLists');
         const getUserReviews = document.getElementById('getUserReviews');
+
+        const requestPasswordReset = document.getElementById('requestPasswordReset');
+        const resetPassword = document.getElementById('resetPassword');
 
            
         updateBook.addEventListener('click', function () {
@@ -758,6 +773,49 @@ getUserReviews.addEventListener('click', function () {
     });
 });
     
+// Request Password Reset Token
+requestPasswordReset.addEventListener('click', function () {
+    var email = document.getElementById('resetEmail').value;
+
+    fetch("http://localhost:3000/v1/tokens/password-reset", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
+// Reset Password
+resetPassword.addEventListener('click', function () {
+    var token = document.getElementById('resetToken').value;
+    var password = document.getElementById('newPassword').value;
+
+    fetch("http://localhost:3000/v1/users/password", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            password: password,
+            token: token
+        })
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
     </script>
 </body>
 </html>

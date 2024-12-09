@@ -160,6 +160,19 @@ books/review/update:
 	@echo 'Updating Review ${id}'; \
 	curl -H "Authorization: Bearer ${token}" -X PUT localhost:3000/api/v1/reviews/${id} -d '{"rating":5.00}'
 
+
+.PHONY: users/password/reset
+user/password/reset:
+	@echo 'Getting Reset Token'; \
+	curl -X POST -d '{"email": "john@example.com"}' localhost:3000/v1/tokens/password-reset
+
+.PHONY :users/password/reset/activate
+user/password/reset/activate:
+	@echo 'Reseting Password'; \
+	BODY='{"password": "dandadan", "token": "ALYUWQ4VC3JQWLIG3WJ2FXGNIA"}'; \
+	curl -X PUT -d "$$BODY" localhost:4000/v1/users/password
+
+
 .PHONY: run/rateLimite/enabled
 run/rateLimit,enabled:
 	@echo 'Running Product API /w Rate Limit...'

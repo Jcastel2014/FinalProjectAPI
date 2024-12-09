@@ -340,3 +340,32 @@ func (u *UserModel) UserExist(id int64) error {
 
 	return u.DB.QueryRowContext(ctx, query, id).Scan(&ID)
 }
+
+func (u *UserModel) UpdatePassword(user *User) error {
+	query := `
+	UPDATE users
+	SET username = $1, email =$2, password_hash = $3, activated = $4,
+	version = version + 1
+	WHERE id = $5 AND version = $6
+	RETURNING version
+	`
+
+	args := []any{user.Username, user.Email, user.Password.hash, user.Activated, user.ID, user.Version}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := u.DB.QueryRowContext(ctx, query, args...).Scan(&user.Version)
+	//check for errors during an update
+	if err != nil {
+		switch {
+		case err.Error() == `pq: duplicate key value violates unique key constraints "users_email_key"`:
+			return ErrDuplicateEmail
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+	return nil
+}
