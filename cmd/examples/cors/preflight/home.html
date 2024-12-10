@@ -140,6 +140,12 @@
             <button id="updateBook">Update Book</button>
 
             <div class="divider"></div>
+            <h2>Delete Book</h2>
+            <input type="number" id="dBook" placeholder="Enter book Id..." />
+
+            <button id="deleteBook">Delete Book</button>
+
+            <div class="divider"></div>
             <h2>Create List</h2>
             <input type="text" id="listName" placeholder="Enter list name..." />
             <input type="text" id="listDescription" placeholder="Enter list description..." />
@@ -285,6 +291,10 @@
         const requestPasswordReset = document.getElementById('requestPasswordReset');
         const resetPassword = document.getElementById('resetPassword');
 
+        const deleteBook = document.getElementById('deleteBook');
+
+        const token = 'EGQFB3Q4PM5BCQKQLBJXHJMZ54'
+
            
         updateBook.addEventListener('click', function () {
             var id = document.getElementById('uId').value;
@@ -304,7 +314,7 @@ fetch("http://localhost:3000/api/v1/books/"+id, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token
         },
             body: JSON.stringify({
             title: title,
@@ -334,7 +344,7 @@ fetch("http://localhost:3000/api/v1/books/"+id, {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
             
     }).then( function(response) {
@@ -365,7 +375,7 @@ fetch("http://localhost:3000/api/v1/books/"+id, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+                    'Authorization': 'Bearer ' + token,
                 },
                     body: JSON.stringify({
                     title: title,
@@ -392,7 +402,7 @@ fetch("http://localhost:3000/api/v1/books/"+id, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+                    'Authorization': 'Bearer ' + token,
                 }
             }).then(function(response) {
                 return response.json(); 
@@ -403,6 +413,24 @@ fetch("http://localhost:3000/api/v1/books/"+id, {
             });
         });
     
+        deleteBook.addEventListener('click', function () {
+    var bookId = document.getElementById('dBook').value;
+
+    fetch("http://localhost:3000/api/v1/books/" + bookId , {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+        },
+    }).then(function (response) {
+        response.text().then(function (text) {
+            document.getElementById("output").innerHTML = text;
+        });
+    }, function (err) {
+        document.getElementById("output").innerHTML = err;
+    });
+});
+
     // Create List
 createList.addEventListener('click', function () {
     var name = document.getElementById('listName').value;
@@ -413,7 +441,7 @@ createList.addEventListener('click', function () {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
             name: name,
@@ -435,7 +463,7 @@ getAllLists.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         }
     }).then(function (response) {
         return response.json();
@@ -454,7 +482,7 @@ getList.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         }
     }).then(function (response) {
         response.text().then(function (text) {
@@ -475,7 +503,7 @@ updateListButton.addEventListener('click', function () {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
             name: name,
@@ -498,7 +526,7 @@ deleteListButton.addEventListener('click', function () {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         }
     }).then(function (response) {
         response.text().then(function (text) {
@@ -518,7 +546,7 @@ addBookToList.addEventListener('click', function () {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
             bookid: +bookId
@@ -541,11 +569,10 @@ removeBookFromList.addEventListener('click', function () {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
-            list_id: +listId,
-            book_id: +bookId
+            list_id: +bookId,
         })
     }).then(function (response) {
         response.text().then(function (text) {
@@ -567,7 +594,7 @@ addReview.addEventListener('click', function () {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
             user_id: +userId,
@@ -591,7 +618,7 @@ getAllReviews.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         }
     }).then(function (response) {
         return response.json();
@@ -610,7 +637,7 @@ deleteReview.addEventListener('click', function () {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         }
     }).then(function (response) {
         response.text().then(function (text) {
@@ -630,7 +657,7 @@ updateReview.addEventListener('click', function () {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
         body: JSON.stringify({
             rating: +updatedRating
@@ -722,7 +749,7 @@ getUserProfile.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
     }).then(function (response) {
         response.json().then(function (data) {
@@ -742,7 +769,7 @@ getUserLists.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
     }).then(function (response) {
         response.json().then(function (data) {
@@ -762,7 +789,7 @@ getUserReviews.addEventListener('click', function () {
         method: "GET",
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer FJQGN4VZOGPIUAIRO3D7QF2GW4'
+            'Authorization': 'Bearer ' + token,
         },
     }).then(function (response) {
         response.json().then(function (data) {
