@@ -218,7 +218,7 @@ func (a *appDependencies) deleteBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := envelope{
-		"message": "comment successfully deleted",
+		"message": "book successfully deleted",
 	}
 
 	err = a.writeJSON(w, http.StatusOK, data, nil)
